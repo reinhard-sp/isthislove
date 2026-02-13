@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine's Day - Choose Your Number</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Floating hearts background */
+        .hearts-background {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .floating-heart {
+            position: absolute;
+            font-size: 24px;
+            color: rgba(255, 255, 255, 0.4);
+            animation: floatUp 12s infinite ease-in-out;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.8;
+            }
+            90% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-10vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Main content container */
+        .main-container {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* Home page with bubbles */
+        .home-page {
+            text-align: center;
+            animation: fadeInScale 0.8s ease-out;
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .home-page.hidden {
+            display: none;
+        }
+
+        .main-title {
+            color: white;
+            font-size: 3.5em;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+            margin-bottom: 40px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.3em;
+            margin-bottom: 50px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Bubbles container */
+        .bubbles-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+        }
+
+        /* Individual bubble */
+        .number-bubble {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #ff758c 0%, #ff4d6d 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3em;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            position: relative;
+            box-shadow: 0 10px 25px rgba(255, 77, 109, 0.5);
+            transition: all 0.4s ease;
+            animation: bobble 3s infinite ease-in-out;
+        }
+
+        /* Stagger the bobble animation */
+        .number-bubble:nth-child(1) { animation-delay: 0s; }
+        .number-bubble:nth-child(2) { animation-delay: 0.2s; }
+        .number-bubble:nth-child(3) { animation-delay: 0.4s; }
+        .number-bubble:nth-child(4) { animation-delay: 0.6s; }
+        .number-bubble:nth-child(5) { animation-delay: 0.8s; }
+        .number-bubble:nth-child(6) { animation-delay: 1s; }
+
+        @keyframes bobble {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* Bubble shine effect */
+        .number-bubble::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 30px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+            filter: blur(8px);
+        }
+
+        .number-bubble:hover {
+            transform: scale(1.2) translateY(-5px);
+            box-shadow: 0 15px 35px rgba(255, 77, 109, 0.7);
+            animation: none;
+        }
+
+        /* Poem page */
+        .poem-page {
+            display: none;
+            max-width: 800px;
+            width: 100%;
+            background: white;
+            border-radius: 25px;
+            padding: 60px 50px;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.4);
+            text-align: center;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .poem-page.active {
+            display: block;
+        }
+
+        .poem-number-display {
+            font-size: 4em;
+            color: #ff4d6d;
+            font-weight: bold;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(255, 77, 109, 0.3);
+        }
+
+        .poem-text {
+            font-size: 1.5em;
+            line-height: 2;
+            color: #333;
+            margin-bottom: 40px;
+            font-style: italic;
+            font-family: 'Georgia', serif;
+        }
+
+        .return-button {
+            background: linear-gradient(145deg, #ff758c 0%, #ff4d6d 100%);
+            color: white;
+            border: none;
+            padding: 18px 50px;
+            font-size: 1.2em;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 6px 20px rgba(255, 77, 109, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .return-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 77, 109, 0.6);
+        }
+
+        .return-button:active {
+            transform: translateY(-1px);
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 2.5em;
+            }
+            .subtitle {
+                font-size: 1.1em;
+            }
+            .number-bubble {
+                width: 110px;
+                height: 110px;
+                font-size: 2.5em;
+            }
+            .poem-page {
+                padding: 40px 30px;
+            }
+            .poem-text {
+                font-size: 1.3em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-title {
+                font-size: 2em;
+            }
+            .number-bubble {
+                width: 90px;
+                height: 90px;
+                font-size: 2em;
+            }
+            .poem-number-display {
+                font-size: 3em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating hearts background -->
+    <div class="hearts-background" id="heartsContainer"></div>
+
+    <!-- Main container -->
+    <div class="main-container">
+        
+        <!-- Home page with number bubbles -->
+        <div class="home-page" id="homePage">
+            <h1 class="main-title">❤️ Hi! Love! ❤️</h1>
+            <p class="subtitle">Choose a number! (Nakalimot kos akoang gibutnag last time hehe)</p>
+            
+            <div class="bubbles-wrapper">
+                <div class="number-bubble" onclick="openPoem(2)">2</div>
+                <div class="number-bubble" onclick="openPoem(3)">3</div>
+                <div class="number-bubble" onclick="openPoem(5)">5</div>
+                <div class="number-bubble" onclick="openPoem(9)">9</div>
+                <div class="number-bubble" onclick="openPoem(11)">11</div>
+                <div class="number-bubble" onclick="openPoem(17)">17</div>
+            </div>
+        </div>
+
+        <!-- Poem page for number 2 -->
+        <div class="poem-page" id="poem2">
+            <div class="poem-number-display">2</div>
+            <div class="poem-text">
+                Two hearts beating together,<br>
+                Two souls bound forever,<br>
+                Two lives intertwined,<br>
+                In love, we're perfectly aligned.
+            </div>
+            <button class="return-button" onclick="returnHome()">← Back to Numbers</button>
+        </div>
+
+        <!-- Poem page for number 3 -->
+        <div class="poem-page" id="poem3">
+            <div class="poem-number-display">3</div>
+            <div class="poem-text">
+                Three simple words I say,<br>
+                To brighten up your day,<br>
+                Three words so warm and true,<br>
+                "I want you."
+            </div>
+            <button class="return-button" onclick="returnHome()">← Back to Numbers</button>
+        </div>
+
+        <!-- Poem page for number 5 -->
+        <div class="poem-page" id="poem5">
+            <div class="poem-number-display">5</div>
+            <div class="poem-text">
+                Five senses come alive,<br>
+                When you are by my side,<br>
+                I see your smile, I feel your touch,<br>
+                I love myself so much (hehe).
+            </div>
+            <button class="return-button" onclick="returnHome()">← Back to Numbers</button>
+        </div>
+
+        <!-- Poem page for number 9 -->
+        <div class="poem-page" id="poem9">
+            <div class="poem-number-display">9</div>
+            <div class="poem-text">
+                Nine clouds up in the sky,<br>
+                Can't reach as high as I,<br>
+                When I'm in love with you,<br>
+                My heart just soars right through.
+            </div>
+            <button class="return-button" onclick="returnHome()">← Back to Numbers</button>
+        </div>
+
+        <!-- Poem page for number 11 -->
+        <div class="poem-page" id="poem11">
+            <div class="poem-number-display">11</div>
+            <div class="poem-text">
+                Eleven wishes on a star,<br>
+                Would be for wherever you are,<br>
+                To know my love is strong and true,<br>
+                Whenever I dreamt of you.
+            </div>
+            <button class="return-button" onclick="returnHome()">← Back to Numbers</button>
+        </div>
+
+        <!-- Poem page for number 17 -->
+        <div class="poem-page" id="poem17">
+            <div class="poem-number-display">17</div>
+            <div class="poem-text">
+                Seventeen roses red and bright,<br>
+                Can't match your beauty in my sight,<br>
+                For you're more lovely than can be,<br>
+                You mean the world to me (not really, it's an idiom hehe).
+            </div>
+            <button class="return-button" onclick="returnHome()">← Back to Numbers</button>
+        </div>
+
+    </div>
+
+    <script>
+        // Create floating hearts in the background
+        function generateFloatingHearts() {
+            const container = document.getElementById('heartsContainer');
+            const heartSymbols = ['❤️', '💕', '💖', '💗', '💝'];
+            
+            for (let i = 0; i < 20; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'floating-heart';
+                heart.textContent = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.animationDelay = Math.random() * 12 + 's';
+                heart.style.animationDuration = (12 + Math.random() * 8) + 's';
+                heart.style.fontSize = (20 + Math.random() * 15) + 'px';
+                container.appendChild(heart);
+            }
+        }
+
+        // Open poem page for selected number
+        function openPoem(number) {
+            document.getElementById('homePage').classList.add('hidden');
+            document.getElementById('poem' + number).classList.add('active');
+        }
+
+        // Return to home page
+        function returnHome() {
+            // Hide all poem pages
+            const poemPages = document.querySelectorAll('.poem-page');
+            poemPages.forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Show home page
+            document.getElementById('homePage').classList.remove('hidden');
+        }
+
+        // Initialize floating hearts when page loads
+        window.addEventListener('load', function() {
+            generateFloatingHearts();
+        });
+    </script>
+</body>
+</html>
